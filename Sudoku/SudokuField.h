@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <utility>
-using namespace std;
+#include "list.h"
 
 class sudokuF {
     int size;
@@ -179,22 +178,57 @@ public:
 
     }
 
+    bool checkWin() {
+        for (int i = 0; i<size; i++)
+            for (int j = 0; j < size; j++) {
+                if (sudoku[i][j] == 0)
+                    return false;
+            }
+        return true;
+    }
+
     bool checkValue(int i, int j, int value) {
         if (sudoku[i][j] != value)
             return true;
         else return false;
     }
 
-    void createSudoku() {
-        int check[9][9];
-        for (int i = 0; i < 9; i++)
+    void openCell(const sudokuF& s) {
+        int i, j;
+        bool chosen = false;
+        srand(time(0));
+        while (!chosen) {
+            i = rand() % size;
+            j = rand() % size;
+            if (sudoku[i][j] == 0) {
+                sudoku[i][j] = s.sudoku[i][j];
+                chosen = true;
+            }
+        }
+    }
+
+    void createSudoku(string level) {
+        List l;
+        for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
-                check[i][j] = 0;
-        bool flag;
+                l.addLast(pair<int, int>(make_pair(i, j)));
+        srand(time(0));
+        int lev;
+        if (level == "Easy")
+            lev = 40;
+        if (level == "Medium")
+            lev = 50;
+        if (level == "Hard")
+            lev = 60;
+        /* int check[9][9];
+         for (int i = 0; i < size; i++)
+             for (int j = 0; j < size; j++)
+                 check[i][j] = 0;*/
+        /*bool flag;
         for (int k = 0; k < 50; k++) {
             flag = true;
             while (flag) {
-                srand(time(0));
+
                 int i = rand() % size;
                 int j = rand() % size;
                 if (!check[i][j]) {
@@ -203,6 +237,11 @@ public:
                     flag = false;
                 }
             }
+        }*/
+        for (int k = 0; k < lev; k++) {
+            int i = rand() % l.getN() + 1;
+            sudoku[l.getPair(i).first][l.getPair(i).second] = 0;
+            l.del(i);
         }
     }
 
